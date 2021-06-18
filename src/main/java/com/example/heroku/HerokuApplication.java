@@ -80,6 +80,7 @@ public class HerokuApplication {
       return new HikariDataSource();
     } else {
       HikariConfig config = new HikariConfig();
+      System.out.println("CUSTOM OUTPUT-- Database URL: " + dbUrl);
       config.setJdbcUrl(dbUrl);
       return new HikariDataSource(config);
     }
