@@ -50,7 +50,7 @@ public class HerokuApplication {
 
   @RequestMapping("/")
   String index(Map<String, Object> model) { // you can add the thymeleaf thingy
-    model.put("emotion", "awesome");
+    model.put("name", "Bob");
     return "index";
   }
 
@@ -78,6 +78,11 @@ public class HerokuApplication {
     }
   }
 
+  @RequestMapping("/rectangle")
+  String rectangle(Map<String, Object> model) {
+    return "rectangle";
+  }
+  
   @Bean
   public DataSource dataSource() throws SQLException {
     if (dbUrl == null || dbUrl.isEmpty()) {

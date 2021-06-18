@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <!-- <html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'index')}"> -->
 
-<body>
+<head>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
+</head>
 
-  <table <tr>
-    <th></th>
-    <th>name</th>
-    <th>color</th>
-    <th>emotion <span th:text=${emotion}></span></th>
+<body>
+  <h2>Rectangles</h2>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Color</th>
+      <th>Width</th>
+      <th>Height</th>
+      <th>Link to rectangle</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td th:text=${name}></td>
+      <td>red</td>
+      <td>60</td>
+      <td>400000000000</td>
+      <td><a href=rectangle>rectangle1</a></td>
     </tr>
   </table>
 
 </body>
-
-</html>
