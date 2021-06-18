@@ -53,7 +53,7 @@ public class HerokuApplication {
     return "index";
   }
 
-  @RequestMapping("/db")
+  @RequestMapping("/db_time")
   String db(Map<String, Object> model) {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
@@ -67,7 +67,7 @@ public class HerokuApplication {
       }
 
       model.put("records", output);
-      return "db";
+      return "db_time";
     } catch (Exception e) {
       model.put("message", e.getMessage());
       return "error";
