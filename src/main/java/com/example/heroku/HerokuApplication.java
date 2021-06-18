@@ -49,12 +49,16 @@ public class HerokuApplication {
   }
 
   @RequestMapping("/")
-  String index() {
+  String index(Map<String, Object> model) { // you can add the thymeleaf thingy
+    model.put("emotion", "awesome");
     return "index";
   }
 
+  // @RequestMapping("/db")
+  // String 
+
   @RequestMapping("/db_time")
-  String db(Map<String, Object> model) {
+  String db_time(Map<String, Object> model) { // function can be called anything
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
@@ -66,7 +70,7 @@ public class HerokuApplication {
         output.add("Read from DB: " + rs.getTimestamp("tick"));
       }
 
-      model.put("records", output);
+      model.put("records", output); // this is for thymeleaf
       return "db_time";
     } catch (Exception e) {
       model.put("message", e.getMessage());
