@@ -58,23 +58,24 @@ public class HerokuApplication {
   }
 
   @PostMapping("/") // triggered by submit button on form
-  String handleSubmit(Map<String, Object> model) {
+  String handleSubmit(Map<String, Object> model, Rectangle rect) {
+    System.out.println("Post request detected");
     try (Connection connection = dataSource.getConnection()) {
-      Rectangle rect = (Rectangle) model.get("rectangle"); // rectangle to submit
+      System.out.println("Connection succeeded");
       String name = rect.getName();
       String color = rect.getColor();
       Integer width = rect.getWidth();
       Integer height = rect.getHeight();
-      String values = String.format("%s, %s, %d, %d", name, color, width, height);
-      String valuesSQL = String.format("(%s);", values);
-      System.out.println("Submitting rectangle with values " + values);
+      String values = String.format("(\'%s\',\'%s\', \'%d\', \'%d\')", name, color, width, height);
+      System.out.println("Submitting rectangle " + values);
       Statement stmt = connection.createStatement();
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rectangles (name TEXT, color TEXT, width INTEGER, height INTEGER)");
-      String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + valuesSQL;
+      String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + values + ";";
       stmt.executeUpdate(addRect);
-      return "";
+      return "index";
 
-    } catch (Exception e) {
+    } catch (SQLException e) {
+      System.out.println("Connection failed");
       model.put("message", e.getMessage());
       return "error";
     }

@@ -18,7 +18,7 @@
     </tr>
     <tr>
       <td>1</td>
-      <td th:text=${name}></td>
+      <td th:text=${rectangle.name}></td>
       <td>red</td>
       <td>60</td>
       <td>400000000000</td>
@@ -28,7 +28,7 @@
 
   <h2>Add new rectangle</h2>
   <!--th:action post to the index endpoint -->
-  <form action=# th:action="@{/}" th:object=${rectangle} method=POST>
+  <form th:object=${rectangle} method=POST>
     <p>Name: <input type=text th:field=*{name} /> </p>
     <p>Color: <input type=text th:field=*{color} /> </p>
     <p>Width: <input type=number th:field=*{width} /> </p>
