@@ -25,6 +25,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -48,16 +50,37 @@ public class HerokuApplication {
     SpringApplication.run(HerokuApplication.class, args);
   }
 
-  @RequestMapping("/")
+  @GetMapping("/")
   String index(Map<String, Object> model) { // you can add the thymeleaf thingy
-    model.put("name", "Bob");
+    Rectangle rectangle = new Rectangle();
+    model.put("rectangle", rectangle);
     return "index";
   }
 
-  // @RequestMapping("/db")
-  // String 
+  @PostMapping("/") // triggered by submit button on form
+  String handleSubmit(Map<String, Object> model) {
+    try (Connection connection = dataSource.getConnection()) {
+      Rectangle rect = (Rectangle) model.get("rectangle"); // rectangle to submit
+      String name = rect.getName();
+      String color = rect.getColor();
+      Integer width = rect.getWidth();
+      Integer height = rect.getHeight();
+      String values = String.format("%s, %s, %d, %d", name, color, width, height);
+      String valuesSQL = String.format("(%s);", values);
+      System.out.println("Submitting rectangle with values " + values);
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rectangles (name TEXT, color TEXT, width INTEGER, height INTEGER)");
+      String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + valuesSQL;
+      stmt.executeUpdate(addRect);
+      return "";
 
-  @RequestMapping("/db_time")
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
+  }
+
+  @GetMapping("/db_time")
   String db_time(Map<String, Object> model) { // function can be called anything
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
@@ -78,11 +101,11 @@ public class HerokuApplication {
     }
   }
 
-  @RequestMapping("/rectangle")
+  @GetMapping("/rectangle")
   String rectangle(Map<String, Object> model) {
     return "rectangle";
   }
-  
+
   @Bean
   public DataSource dataSource() throws SQLException {
     if (dbUrl == null || dbUrl.isEmpty()) {
