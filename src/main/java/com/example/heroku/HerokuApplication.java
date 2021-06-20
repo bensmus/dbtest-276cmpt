@@ -92,10 +92,8 @@ public class HerokuApplication {
       System.out.println("Connection succeeded");
       Statement stmt = connection.createStatement();
       stmt.executeUpdate(String.format("DELETE FROM rectangles WHERE id=%s", id));
+      return "redirect:/"; // we go to a path well traveled ;)
 
-      // Temporary: make rectangle non null
-      model.put("rectangle", new Rectangle());
-      return "index";
     } catch (Exception e) {
       System.out.println("Connection failed");
       model.put("message", e.getMessage());
