@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.ResultSet;
+import java.sql.ResultSet; // For results from SQL select query.
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.ArrayList; // Object for storing rectangles -> great to pass into model.
 import java.util.Map;
 
 @Controller
@@ -52,10 +52,43 @@ public class HerokuApplication {
   }
 
   @GetMapping("/")
-  String index(Map<String, Object> model) { // you can add the thymeleaf thingy
-    Rectangle rectangle = new Rectangle();
-    model.put("rectangle", rectangle);
-    return "index";
+  String index(Map<String, Object> model) { // you can add the thymeleaf thingy, in fact, its a must if you want dynamic webpage
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      String query = "SELECT * FROM rectangles";
+      ResultSet rs = stmt.executeQuery(query);
+
+      // loop through result set, making a list of Rectangle objects
+      ArrayList<Rectangle> rectangles = new ArrayList<>();
+      while (rs.next()) {
+        Rectangle rect = new Rectangle();
+        rect.setId(rs.getInt("id"));
+        rect.setName(rs.getString("name"));
+        rect.setColor(rs.getString("color"));
+        rect.setWidth(rs.getInt("width"));
+        rect.setHeight(rs.getInt("height"));
+        rectangles.add(rect);
+      }
+
+      // display contents of db in HTML table
+      model.put("rectangles", rectangles);
+
+      // debug af
+      for (Rectangle rectangle : rectangles) {
+        System.out.println(rectangle);
+      }
+
+      // have a blank rectangle ready for post requests
+      Rectangle rectangle = new Rectangle();
+      model.put("rectangle", rectangle);
+      return "index";
+    }
+
+    catch (SQLException e) {
+      System.out.println("Connection failed");
+      model.put("message", e.getMessage());
+      return "error";
+    }
   }
 
   @PostMapping("/submit") // triggered by submit button on form
@@ -74,7 +107,7 @@ public class HerokuApplication {
           "CREATE TABLE IF NOT EXISTS rectangles (id SERIAL, name TEXT, color TEXT, width INTEGER, height INTEGER)");
       String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + values;
       stmt.executeUpdate(addRect);
-      return "index";
+      return "redirect:/"; // so that we run all of the code in @GetMapping("/")
 
     } catch (SQLException e) {
       System.out.println("Connection failed");

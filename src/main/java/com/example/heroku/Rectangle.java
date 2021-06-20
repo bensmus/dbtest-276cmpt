@@ -15,7 +15,6 @@ public class Rectangle {
         this.id = id;
     }
 
-
     public String getName() {
         return this.name;
     }
@@ -47,4 +46,11 @@ public class Rectangle {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    @Override
+    public String toString() {
+        return "{" + " id='" + getId() + "'" + ", name='" + getName() + "'" + ", color='" + getColor() + "'"
+                + ", width='" + getWidth() + "'" + ", height='" + getHeight() + "'" + "}";
+    }
+
 }
