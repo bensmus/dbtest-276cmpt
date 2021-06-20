@@ -17,3 +17,8 @@ table {
 body {
   margin: 20px;
 }
+
+button {
+  padding: 10px;
+  font-size: large;
+}

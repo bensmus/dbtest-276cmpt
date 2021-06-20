@@ -1,10 +1,19 @@
 package com.example.heroku;
 
 public class Rectangle {
+    private int id;
     private String name;
     private String color;
     private int width;
     private int height;
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
 
     public String getName() {

@@ -24,9 +24,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -57,7 +58,7 @@ public class HerokuApplication {
     return "index";
   }
 
-  @PostMapping("/") // triggered by submit button on form
+  @PostMapping("/submit") // triggered by submit button on form
   String handleSubmit(Map<String, Object> model, Rectangle rect) {
     System.out.println("Post request detected");
     try (Connection connection = dataSource.getConnection()) {
@@ -66,15 +67,36 @@ public class HerokuApplication {
       String color = rect.getColor();
       Integer width = rect.getWidth();
       Integer height = rect.getHeight();
-      String values = String.format("(\'%s\',\'%s\', \'%d\', \'%d\')", name, color, width, height);
+      String values = String.format("('%s','%s', '%d', '%d')", name, color, width, height);
       System.out.println("Submitting rectangle " + values);
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS rectangles (name TEXT, color TEXT, width INTEGER, height INTEGER)");
-      String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + values + ";";
+      stmt.executeUpdate(
+          "CREATE TABLE IF NOT EXISTS rectangles (id SERIAL, name TEXT, color TEXT, width INTEGER, height INTEGER)");
+      String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + values;
       stmt.executeUpdate(addRect);
       return "index";
 
     } catch (SQLException e) {
+      System.out.println("Connection failed");
+      model.put("message", e.getMessage());
+      return "error";
+    }
+  }
+
+  // Delete specific rectangle using button-> rectangle id is path variable
+  @DeleteMapping("/delrect/{id}")
+  String deleteRectId(Map<String, Object> model, @PathVariable String id) {
+
+    System.out.println("Delete request detected");
+    try (Connection connection = dataSource.getConnection()) {
+      System.out.println("Connection succeeded");
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate(String.format("DELETE FROM rectangles WHERE id=%s", id));
+
+      // Temporary: make rectangle non null
+      model.put("rectangle", new Rectangle());
+      return "index";
+    } catch (Exception e) {
       System.out.println("Connection failed");
       model.put("message", e.getMessage());
       return "error";

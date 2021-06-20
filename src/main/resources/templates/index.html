@@ -15,6 +15,7 @@
       <th>Width</th>
       <th>Height</th>
       <th>Link to rectangle</th>
+      <th></th>
     </tr>
     <tr>
       <td>1</td>
@@ -23,12 +24,20 @@
       <td>60</td>
       <td>400000000000</td>
       <td><a href=rectangle>rectangle1</a></td>
+      <td>
+        <!--Wrap button into form-->
+        <form action="#" th:action="@{/delrect/1}" th:method="delete">
+          <input type="hidden" name="_method" value="delete" />
+          <button type="submit">-</button>
+        </form>
+
+      </td>
     </tr>
   </table>
 
   <h2>Add new rectangle</h2>
-  <!--th:action post to the index endpoint -->
-  <form th:object=${rectangle} method=POST>
+  <!--th:action post to the submit endpoint -->
+  <form th:action=@{/submit} th:object=${rectangle} method=POST>
     <p>Name: <input type=text th:field=*{name} /> </p>
     <p>Color: <input type=text th:field=*{color} /> </p>
     <p>Width: <input type=number th:field=*{width} /> </p>
