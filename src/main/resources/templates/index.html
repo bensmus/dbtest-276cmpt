@@ -17,7 +17,7 @@
       <th>Link to rectangle</th>
       <th></th>
     </tr>
-    <tr>
+    <!--<tr>
       <td>1</td>
       <td>bob</td>
       <td>red</td>
@@ -25,8 +25,25 @@
       <td>400000000000</td>
       <td><a href=rectangle>rectangle1</a></td>
       <td>
-        <!--Wrap button into form-->
+        Wrap button into form
         <form action="#" th:action="@{/delrect/1}" th:method="delete">
+          <input type="hidden" name="_method" value="delete" />
+          <button type="submit">-</button>
+        </form>
+
+      </td>
+    </tr>-->
+    <tr th:each="rect: ${rects}">
+      <td th:text=${rect.id}></td>
+      <td th:text=${rect.name}></td>
+      <td th:text=${rect.color}></td>
+      <td th:text=${rect.width}></td>
+      <td th:text=${rect.height}></td>
+      <td><a href=rectangle th:text="${'rectangle' + rect.id}"></a></td>
+      <td>
+        <!-- Wrap button into form -->
+        <!-- Delete rect at id-->
+        <form action="#" th:action="@{${'/delrect/' + rect.id}}" th:method="delete">
           <input type="hidden" name="_method" value="delete" />
           <button type="submit">-</button>
         </form>
