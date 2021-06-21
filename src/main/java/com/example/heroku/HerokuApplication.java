@@ -55,6 +55,8 @@ public class HerokuApplication {
 	String index(Map<String, Object> model) { // you can add the thymeleaf thingy, in fact, its a must if you want dynamic webpage
 		try (Connection connection = dataSource.getConnection()) {
 			Statement stmt = connection.createStatement();
+			stmt.executeUpdate(
+					"CREATE TABLE IF NOT EXISTS rectangles (id SERIAL, name TEXT, color TEXT, width INTEGER, height INTEGER)");
 			String query = "SELECT * FROM rectangles";
 			ResultSet rs = stmt.executeQuery(query);
 
@@ -103,8 +105,6 @@ public class HerokuApplication {
 			String values = String.format("('%s','%s', '%d', '%d')", name, color, width, height);
 			System.out.println("Submitting rectangle " + values);
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS rectangles (id SERIAL, name TEXT, color TEXT, width INTEGER, height INTEGER)");
 			String addRect = "INSERT INTO rectangles (name, color, width, height) VALUES " + values;
 			stmt.executeUpdate(addRect);
 			return "redirect:/"; // so that we run all of the code in @GetMapping("/")
