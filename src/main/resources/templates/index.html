@@ -15,24 +15,10 @@
       <th>Width</th>
       <th>Height</th>
       <th>Link to rectangle</th>
-      <th></th>
+      <th>Button to delete rectangle</th>
     </tr>
-    <!--<tr>
-      <td>1</td>
-      <td>bob</td>
-      <td>red</td>
-      <td>60</td>
-      <td>400000000000</td>
-      <td><a href=rectangle>rectangle1</a></td>
-      <td>
-        Wrap button into form
-        <form action="#" th:action="@{/delrect/1}" th:method="delete">
-          <input type="hidden" name="_method" value="delete" />
-          <button type="submit">-</button>
-        </form>
 
-      </td>
-    </tr>-->
+    <!-- Making all of the non head rows -->
     <tr th:each="rect: ${rects}">
       <td th:text=${rect.id}></td>
       <td th:text=${rect.name}></td>
@@ -45,11 +31,11 @@
         <!-- Delete rect at id-->
         <form action="#" th:action="@{${'/delrect/' + rect.id}}" th:method="delete">
           <input type="hidden" name="_method" value="delete" />
-          <button type="submit">-</button>
+          <button type="submit"></button>
         </form>
-
       </td>
     </tr>
+
   </table>
 
   <h2>Add new rectangle</h2>
@@ -57,11 +43,11 @@
   <form th:action=@{/submit} th:object=${rectangle} method=POST>
     <p>Name: <input type=text th:field=*{name} /> </p>
     <p>Color: <input type=text th:field=*{color} /> </p>
-    <p>Width: <input type=number th:field=*{width} /> </p>
-    <p>Height: <input type=number th:field=*{height} /> </p>
+    <p>Width (pixels): <input type=number th:field=*{width} /> </p>
+    <p>Height (pixels): <input type=number th:field=*{height} /> </p>
     <!--Submit button-->
     <p><input type=submit value=Submit>
     </p>
   </form>
-
+  <a target=_blank href=https://www.w3schools.com/colors/colors_names.asp>List of valid color inputs</a>
 </body>

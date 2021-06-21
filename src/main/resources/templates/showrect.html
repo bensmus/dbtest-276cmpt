@@ -5,6 +5,9 @@
 </head>
 
 <body>
-    <h2 th:text="${'Rectangle highlight: ' + showrect.name + ' the ' + showrect.color}"></h2>
-
+    <h2 th:text="${showrect.name + ' the ' + showrect.color}"></h2>
+    <div
+        th:style="${'background-color:' + showrect.color + ';' + 'width:' + showrect.width + 'px;' + 'height:' + showrect.height + 'px;'}">
+    </div>
+    <p th:text="'Dimensions: ' + ${showrect.width} + ' X ' + ${showrect.height}"></p>
 </body>
