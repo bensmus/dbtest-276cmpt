@@ -39,7 +39,7 @@
       <td th:text=${rect.color}></td>
       <td th:text=${rect.width}></td>
       <td th:text=${rect.height}></td>
-      <td><a href=rectangle th:text="${'rectangle' + rect.id}"></a></td>
+      <td><a th:href="@{${'/showrect/' + rect.id}}" th:text="${'rectangle' + rect.id}"></a></td>
       <td>
         <!-- Wrap button into form -->
         <!-- Delete rect at id-->

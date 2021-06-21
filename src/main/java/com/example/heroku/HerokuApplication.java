@@ -84,8 +84,8 @@ public class HerokuApplication {
 			return "index";
 		}
 
-		catch (SQLException e) {
-			System.out.println("Connection failed");
+		catch (Exception e) {
+			e.printStackTrace();
 			model.put("message", e.getMessage());
 			return "error";
 		}
@@ -109,8 +109,10 @@ public class HerokuApplication {
 			stmt.executeUpdate(addRect);
 			return "redirect:/"; // so that we run all of the code in @GetMapping("/")
 
-		} catch (SQLException e) {
-			System.out.println("Connection failed");
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
 			model.put("message", e.getMessage());
 			return "error";
 		}
@@ -129,13 +131,57 @@ public class HerokuApplication {
 			return "redirect:/"; // we go to a path well traveled ;)
 
 		} catch (Exception e) {
-			System.out.println("Connection failed");
 			e.printStackTrace();
 			model.put("message", e.getMessage());
 			return "error";
 		}
 	}
 
+	@GetMapping("/showrect/{id}")
+	String rectangle(Map<String, Object> model, @PathVariable String id) {
+		System.out.printf("Get request detected for id=%s", id);
+
+		try (Connection connection = dataSource.getConnection()) {
+			// create a rectangle object from sql table row
+			Statement stmt = connection.createStatement();
+			String query = String.format("SELECT * FROM rectangles WHERE id=%s", id);
+			ResultSet rs = stmt.executeQuery(query);
+
+			Rectangle showrect = new Rectangle();
+
+			while (rs.next()) {
+				showrect.setId(rs.getInt("id"));
+				showrect.setName(rs.getString("name"));
+				showrect.setColor(rs.getString("color"));
+				showrect.setWidth(rs.getInt("width"));
+				showrect.setHeight(rs.getInt("height"));
+			}
+
+			model.put("showrect", showrect);
+			return "showrect";
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("message", e.getMessage());
+			return "error";
+		}
+	}
+
+	@Bean
+	public DataSource dataSource() throws SQLException {
+		if (dbUrl == null || dbUrl.isEmpty()) {
+			return new HikariDataSource();
+		} else {
+			HikariConfig config = new HikariConfig();
+			System.out.println("CUSTOM OUTPUT-- Database URL: " + dbUrl);
+			config.setJdbcUrl(dbUrl);
+			return new HikariDataSource(config);
+		}
+	}
+
+	// This is just for demonstration purposes,
+	// not actually usefull for the rectangle app.
 	@GetMapping("/db_time")
 	String db_time(Map<String, Object> model) { // function can be called anything
 		try (Connection connection = dataSource.getConnection()) {
@@ -156,22 +202,4 @@ public class HerokuApplication {
 			return "error";
 		}
 	}
-
-	@GetMapping("/rectangle")
-	String rectangle(Map<String, Object> model) {
-		return "rectangle";
-	}
-
-	@Bean
-	public DataSource dataSource() throws SQLException {
-		if (dbUrl == null || dbUrl.isEmpty()) {
-			return new HikariDataSource();
-		} else {
-			HikariConfig config = new HikariConfig();
-			System.out.println("CUSTOM OUTPUT-- Database URL: " + dbUrl);
-			config.setJdbcUrl(dbUrl);
-			return new HikariDataSource(config);
-		}
-	}
-
 }
