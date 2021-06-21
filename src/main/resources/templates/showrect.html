@@ -11,3 +11,24 @@
     </div>
     <p th:text="'Dimensions: ' + ${showrect.width} + ' X ' + ${showrect.height}"></p>
 </body>
+
+<!--Script that displays alert if background color is not supported-->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    let color = /*[[${showrect.color}]]*/ 'default';
+    console.log(color);
+
+    // https://stackoverflow.com/questions/48484767/javascript-check-if-string-is-valid-css-color
+    const isColor = (strColor) => {
+        const s = new Option().style;
+        s.color = strColor;
+        return s.color !== '';
+    }
+
+    if (!isColor(color)) {
+        alert(`${color} is not a valid CSS color.`)
+    }
+
+    /*]]>*/
+</script>
